@@ -34,6 +34,12 @@ public:
 };
 
 template <class DT>
+ostream& operator<< <DT>(ostream& s, GLRow<DT>& oneGLRow) {
+    s << _info;
+    return s;
+}
+
+template <class DT>
 GLRow<DT>::GLRow() {
     _info = NULL;
     _next = NULL;
