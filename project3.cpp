@@ -22,20 +22,19 @@ public:
     GLRow(); //no-args constructor
     GLRow(DT& newInfo); //args constructor
     GLRow(GLRow<DT>& anotherOne); //copy constructor
-    //TODO: do deep copy on operator= method
     GLRow<DT>& operator= (GLRow<DT>& anotherOne);
-    int getNext();
-    int getDown();
-    DT& getInfo();
-    void setNext(int n);
-    void setDown(int d);
-    void setInfo(DT& i);
+    int getNext(); //returns next
+    int getDown(); //returns down
+    DT& getInfo(); //returns info
+    void setNext(int n); //sets next
+    void setDown(int d); //sets down
+    void setInfo(DT& i); //sets info
     ~GLRow(); //destructor
 };
 
 template <class DT>
 ostream& operator<< <DT>(ostream& s, GLRow<DT>& oneGLRow) {
-    s << _info;
+    s << oneGLRow._info;
     return s;
 }
 
@@ -45,6 +44,7 @@ GLRow<DT>::GLRow() {
     _next = NULL;
     _down = NULL;
 }
+
 template <class DT>
 GLRow<DT>::GLRow(DT& newInfo) {
     _info = newInfo;
@@ -56,14 +56,14 @@ template <class DT>
 GLRow<DT>::GLRow(GLRow<DT>& anotherOne) {
     _info = anotherOne._info;
     _next = anotherOne._next;
-    _down = anotherOne._down;
+    _down = anotherOne._down; //shallow copies all variables from anotherOne
 }
 
 template <class DT>
 GLRow<DT>& GLRow<DT>::operator= (GLRow<DT>& anotherOne) {
     _info = new DT(*anotherOne._info);
     _next = new int(*anotherOne._next);
-    _down = new int(*anotherOne._down);
+    _down = new int(*anotherOne._down); //deep copies all variables from anotherOne
 }
 
 template <class DT>
