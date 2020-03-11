@@ -3,6 +3,14 @@
  *Author: Jackson Bradshaw, 113474543
  */
 
+#include <iostream>
+using namespace std;
+
+template <class DT>
+class GLRow; //class prototype
+template <class DT>
+ostream& operator <<(ostream& s, GLRow<DT>& oneGLRow);
+
 template <class DT>
 class GLRow {
     friend ostream& operator<< <DT>(ostream& s, GLRow<DT>& oneGLRow);
@@ -51,8 +59,13 @@ GLRow<DT>::~GLRow() {
 }
 
 template <class DT>
+class ArrayGLL; //class prototype
+template <class DT>
+ostream& operator <<(ostream& s, ArrayGLL<DT>& oneGLL);
+
+template <class DT>
 class ArrayGLL {
-    friend ostream& operator<< <DT>(ostream& s, ArrayGLL<DT>& OneGLL);
+    friend ostream& operator<< <DT>(ostream& s, ArrayGLL<DT>& oneGLL);
 protected:
     GLRow<DT>* myGLL; //array of GLRows
     int maxSize; //maximum size of the array of GLRows
@@ -111,6 +124,17 @@ ArrayGLL<DT>::~ArrayGLL() {
 
 int main() {
     
+    ArrayGLL<int> firstGLL(20);
+    int noElements, value, next, down, parentPos;
+    int pos = -1;
+    int keyValue;
+    int tempValue = 0;
+    GLRow<int> oneRow;
+    //all variables defined
     
+    //first line of input contains the number of elements
+    cin >> noElements;
+    
+
     return 0;
 }
