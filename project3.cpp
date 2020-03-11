@@ -54,6 +54,13 @@ GLRow<DT>::GLRow(GLRow<DT>& anotherOne) {
 }
 
 template <class DT>
+GLRow<DT>& GLRow<DT>::operator= (GLRow<DT>& anotherOne) {
+    _info = new DT(*anotherOne._info);
+    _next = new int(*anotherOne._next);
+    _down = new int(*anotherOne._down);
+}
+
+template <class DT>
 int GLRow<DT>::getNext() {
     return _next;
 }
