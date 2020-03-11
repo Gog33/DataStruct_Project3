@@ -27,9 +27,9 @@ public:
     int getNext();
     int getDown();
     DT& getInfo();
-    int setNext(int n);
-    int setDown(int d);
-    int setInfo(DT& x);
+    void setNext(int n);
+    void setDown(int d);
+    void setInfo(DT& i);
     ~GLRow(); //destructor
 };
 
@@ -51,6 +51,36 @@ GLRow<DT>::GLRow(GLRow<DT>& anotherOne) {
     _info = anotherOne._info;
     _next = anotherOne._next;
     _down = anotherOne._down;
+}
+
+template <class DT>
+int GLRow<DT>::getNext() {
+    return _next;
+}
+
+template <class DT>
+int GLRow<DT>::getDown() {
+    return _down;
+}
+
+template <class DT>
+DT& GLRow<DT>::getInfo() {
+    return _info;
+}
+
+template <class DT>
+void GLRow<DT>::setNext(int n) {
+    _next = n;
+}
+
+template <class DT>
+void GLRow<DT>::setDown(int d) {
+    _down = d;
+}
+
+template <class DT>
+void GLRow<DT>::setInfo(DT& i) {
+    _info = i;
 }
 
 template <class DT>
@@ -124,17 +154,7 @@ ArrayGLL<DT>::~ArrayGLL() {
 
 int main() {
     
-    ArrayGLL<int> firstGLL(20);
-    int noElements, value, next, down, parentPos;
-    int pos = -1;
-    int keyValue;
-    int tempValue = 0;
-    GLRow<int> oneRow;
-    //all variables defined
-    
-    //first line of input contains the number of elements
-    cin >> noElements;
-    
+    //implemented after full class construction
 
     return 0;
 }
