@@ -54,9 +54,9 @@ GLRow<DT>::GLRow(DT& newInfo) {
 
 template <class DT>
 GLRow<DT>::GLRow(GLRow<DT>& anotherOne) {
-    _info = anotherOne._info;
-    _next = anotherOne._next;
-    _down = anotherOne._down; //shallow copies all variables from anotherOne
+    _info = new DT(*anotherOne._info);
+    _next = new int(*anotherOne._next);
+    _down = new int(*anotherOne._down); //deep copies all variables from anotherOne
 }
 
 template <class DT>
@@ -142,6 +142,7 @@ public:
 template <class DT>
 ArrayGLL<DT>::ArrayGLL() {
     myGLL = NULL;
+    maxSize = NULL;
     firstElement = NULL;
     firstFree = NULL;
 }
@@ -149,15 +150,27 @@ ArrayGLL<DT>::ArrayGLL() {
 template <class DT>
 ArrayGLL<DT>::ArrayGLL(int size) {
     myGLL = new GLRow<DT>[size];
+    maxSize = size;
     firstElement = NULL;
     firstFree = NULL;
 }
 
 template <class DT>
 ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
-    myGLL = anotherOne.myGLL;
-    firstElement = anotherOne.firstElement;
-    firstFree = anotherOne.firstFree;
+    myGLL = new myGLL(*anotherOne.myGLL);
+    maxSize = new int(*anotherOne.maxSize);
+    firstElement = new int(*anotherOne.firstElement);
+    firstFree = new int(*anotherOne.firstFree);
+}
+
+template <class DT>
+int ArrayGLL<DT>::find(DT& key) {
+    for (int i = 0; i < maxSize; ++i) {
+        if (myGLL[i] == key) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 template <class DT>
