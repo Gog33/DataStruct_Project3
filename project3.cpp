@@ -166,11 +166,27 @@ ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
 template <class DT>
 int ArrayGLL<DT>::find(DT& key) {
     for (int i = 0; i < maxSize; ++i) {
-        if (myGLL[i] == key) {
-            return i;
+        if (myGLL[i].getInfo() == key) {
+            return i; //returns index of key searched for
         }
     }
-    return -1;
+    return -1; //retuns -1 if key is not in array
+}
+
+template <class DT>
+int ArrayGLL<DT>::noFree() {
+    return 0; //TODO: complete this
+}
+
+template <class DT>
+int ArrayGLL<DT>::size() {
+    int size = 0;
+    for (int i = 0; i < maxSize; ++i) {
+        if (myGLL[i].getInfo() != NULL) { //if an element with info is present
+            ++size; //adds to size, the number of elements stored
+        }
+    }
+    return size;
 }
 
 template <class DT>
