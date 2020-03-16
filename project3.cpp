@@ -48,8 +48,8 @@ GLRow<DT>::GLRow() {
 template <class DT>
 GLRow<DT>::GLRow(DT& newInfo) {
     _info = newInfo;
-    _next = NULL;
-    _down = NULL;
+    _next = -1;
+    _down = -1;
 }
 
 template <class DT>
@@ -170,26 +170,23 @@ ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
     firstElement = new int;
     firstElement = anotherOne.firstElement;
     firstFree = new int;
-    firstFree = anotherOne.firstFree;
+    firstFree = anotherOne.firstFree; //deep copy
 }
 
 template <class DT>
 int ArrayGLL<DT>::find(DT& key) {
-    for (int i = 0; i < maxSize; ++i) {
-        if (myGLL[i].getInfo() == key) {
-            return i; //returns index of key searched for
-        }
-    }
+    //TODO: complete this recursively
+    
     return -1; //retuns -1 if key is not in array
 }
 
 template <class DT>
 int ArrayGLL<DT>::noFree() {
-    int numFree = 0;
-    for (int i = 0; i < maxSize; ++i) {
-        if (myGLL[i].getInfo() == 999) { //_info of 999 denotes free location
-            ++numFree; //adds to noFree
-        }
+    GLRow<DT> freeRow = myGLL[firstFree]; //starts at first free location in myGLL array
+    int numFree = 1; //initialized to 1 for first free location
+    while (freeRow.getNext() != -1) { //while the node has a next
+        freeRow = myGLL[freeRow.getNext()]; //sets freeRow to next node
+        numFree++; //adds to numFree per node travelled
     }
     return numFree;
 }
@@ -209,6 +206,26 @@ int ArrayGLL<DT>::size() {
 template <class DT>
 GLRow<DT>& ArrayGLL<DT>::operator [] (int pos) {
     return myGLL[pos];
+}
+
+template <class DT>
+int ArrayGLL<DT>::getFirstFree() {
+    return firstFree;
+}
+
+template <class DT>
+int ArrayGLL<DT>::getFirstElement() {
+    return firstElement;
+}
+
+template <class DT>
+void ArrayGLL<DT>::setFirstFree(int pos) {
+    firstFree = pos;
+}
+
+template <class DT>
+void ArrayGLL<DT>::setFirstElement(int pos) {
+    firstElement = pos;
 }
 
 template <class DT>
