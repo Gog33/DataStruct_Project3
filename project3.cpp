@@ -128,6 +128,7 @@ public:
     void display(); //display in parenthesis format
     int find(DT& key);  //returns index position of the element key
                         //returns -1 if key is not present
+    int find(DT& key, int startPos); //part of find recursive algorithm
     void findDisplayPath(DT& key); /*prints the values of nodes
                                     *visited along the route to
                                     *the element key
@@ -175,9 +176,27 @@ ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
 
 template <class DT>
 int ArrayGLL<DT>::find(DT& key) {
-    //TODO: complete this recursively
+    find(key, firstElement); //goes to recursive find algorithm
     
-    return -1; //retuns -1 if key is not in array
+    return -1; //returns -1, in case of error with recursive call (may not be necessary)
+}
+
+template <class DT>
+int ArrayGLL<DT>::find(DT& key, int startPos) {
+    if (myGLL[startPos].getInfo() == key) {
+        return startPos; //index with the correct key
+    }
+    int currPos = myGLL[startPos].getDown();
+    if (currPos != -1) { //if node has a down connection
+        int result = find(key, currPos); //first recursive call
+                                         //set to result so that -1 is not automatically returned
+        while (myGLL[currPos].getNext() != -1 && result == -1) { //while there is a next node
+            currPos = myGLL[currPos].getNext();                  //and result is still -1 (key not found)
+            result = find(key, currPos); //recursive call
+        }
+        return result; //returns result, -1 or otherwise
+    }
+    return -1; //returns -1 if startPos node lacks key and has no down node
 }
 
 template <class DT>
