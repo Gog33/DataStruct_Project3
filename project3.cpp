@@ -13,7 +13,7 @@ ostream& operator <<(ostream& s, GLRow<DT>& oneGLRow);
 
 template <class DT>
 class GLRow {
-    friend ostream& operator<< <DT>(ostream& s, GLRow<DT>& oneGLRow);
+    friend ostream& operator<< <DT>(ostream& s, const GLRow<DT>& oneGLRow);
 protected:
     DT* _info;
     int _next;
@@ -33,7 +33,7 @@ public:
 };
 
 template <class DT>
-ostream& operator<< <DT>(ostream& s, GLRow<DT>& oneGLRow) {
+ostream& operator<< (ostream& s, const GLRow<DT>& oneGLRow) {
     s << oneGLRow._info;
     return s;
 }
@@ -54,16 +54,22 @@ GLRow<DT>::GLRow(DT& newInfo) {
 
 template <class DT>
 GLRow<DT>::GLRow(GLRow<DT>& anotherOne) {
-    _info = new DT(*anotherOne._info);
-    _next = new int(*anotherOne._next);
-    _down = new int(*anotherOne._down); //deep copies all variables from anotherOne
+    _info = new DT;
+    _info = anotherOne._info;
+    _next = new int;
+    _next = anotherOne._next;
+    _down = new int;
+    _down = anotherOne._down; //deep copies all variables from anotherOne
 }
 
 template <class DT>
 GLRow<DT>& GLRow<DT>::operator= (GLRow<DT>& anotherOne) {
-    _info = new DT(*anotherOne._info);
-    _next = new int(*anotherOne._next);
-    _down = new int(*anotherOne._down); //deep copies all variables from anotherOne
+    _info = new DT;
+    _info = anotherOne._info;
+    _next = new int;
+    _next = anotherOne._next;
+    _down = new int;
+    _down = anotherOne._down; //deep copies all variables from anotherOne
 }
 
 template <class DT>
@@ -157,10 +163,14 @@ ArrayGLL<DT>::ArrayGLL(int size) {
 
 template <class DT>
 ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
-    myGLL = new myGLL(*anotherOne.myGLL);
-    maxSize = new int(*anotherOne.maxSize);
-    firstElement = new int(*anotherOne.firstElement);
-    firstFree = new int(*anotherOne.firstFree);
+    myGLL = new GLRow<DT>;
+    myGLL = anotherOne.myGLL;
+    maxSize = new int;
+    maxSize = anotherOne.maxSize;
+    firstElement = new int;
+    firstElement = anotherOne.firstElement;
+    firstFree = new int;
+    firstFree = anotherOne.firstFree;
 }
 
 template <class DT>
@@ -175,18 +185,30 @@ int ArrayGLL<DT>::find(DT& key) {
 
 template <class DT>
 int ArrayGLL<DT>::noFree() {
-    return 0; //TODO: complete this
+    int numFree = 0;
+    for (int i = 0; i < maxSize; ++i) {
+        if (myGLL[i].getInfo() == 999) { //_info of 999 denotes free location
+            ++numFree; //adds to noFree
+        }
+    }
+    return numFree;
 }
 
 template <class DT>
 int ArrayGLL<DT>::size() {
     int size = 0;
     for (int i = 0; i < maxSize; ++i) {
-        if (myGLL[i].getInfo() != NULL) { //if an element with info is present
+        if (myGLL[i].getInfo() != NULL && myGLL[i].getInfo() != 999) {  //if a non-free element 
+                                                                        //with info is present
             ++size; //adds to size, the number of elements stored
         }
     }
     return size;
+}
+
+template <class DT>
+GLRow<DT>& ArrayGLL<DT>::operator [] (int pos) {
+    return myGLL[pos];
 }
 
 template <class DT>
