@@ -128,7 +128,6 @@ public:
     void display(); //display in parenthesis format
     int find(DT& key);  //returns index position of the element key
                         //returns -1 if key is not present
-    int find(DT& key, int startPos); //part of find recursive algorithm
     void findDisplayPath(DT& key); /*prints the values of nodes
                                     *visited along the route to
                                     *the element key
@@ -144,6 +143,9 @@ public:
     void setFirstFree(int pos); 
     void setFirstElement(int pos); 
     ~ArrayGLL(); //destructor
+private:
+    int find(DT& key, int startPos); //part of find recursive algorithm
+    int parentPos(DT& key, int startPos, int lastPos); //part of parentPos recursive call
 };
 
 template <class DT>
@@ -220,6 +222,33 @@ int ArrayGLL<DT>::size() {
         }
     }
     return size;
+}
+
+template <class DT>
+int ArrayGLL<DT>::parentPos(DT& key) {
+    parentPos(key, firstElement, -1); //goes to recursive parentPos algorithm
+                                      //-1 initially, because first Element has no parent position
+    
+    return -1; //returns -1, in case of error with recursive call (may not be necessary)
+}
+
+template <class DT>
+int ArrayGLL<DT>::parentPos(DT& key, int startPos, int lastPos) {
+    if (myGLL[startPos].getInfo() == key) {
+        return lastPos; //index with the correct key
+    }
+    int pastPos = startPos;
+    int currPos = myGLL[startPos].getDown();
+    if (currPos != -1) { //if node has a down connection 
+        int result = parentPos(key, currPos, pastPos); //first recursive call *THIS IS WHERE I LEFT OFF
+        while (myGLL[currPos].getNext() != -1 && result == -1) { //while there is a next node
+            pastPos = currPos; //set pastPos to currPos          //and result is still -1 (key not found)
+            currPos = myGLL[currPos].getNext(); //sends currPos to next node
+            result = find(key, currPos, pastPos); //recursive call
+        }
+        return result; //returns result, -1 or otherwise
+    }
+    return -1; //returns -1 if startPos node lacks key and has no down node
 }
 
 template <class DT>
