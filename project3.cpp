@@ -34,7 +34,7 @@ public:
 
 template <class DT>
 ostream& operator<< (ostream& s, const GLRow<DT>& oneGLRow) {
-    s << oneGLRow._info;
+    s << *(oneGLRow._info);
     return s;
 }
 
@@ -47,15 +47,15 @@ GLRow<DT>::GLRow() {
 
 template <class DT>
 GLRow<DT>::GLRow(DT& newInfo) {
-    _info = newInfo;
+    *_info = newInfo;
     _next = -1;
     _down = -1;
 }
 
 template <class DT>
 GLRow<DT>::GLRow(GLRow<DT>& anotherOne) {
-    _info = new DT;
-    _info = anotherOne._info;
+    *_info = new DT;
+    *_info = *(anotherOne._info);
     _next = new int;
     _next = anotherOne._next;
     _down = new int;
@@ -64,8 +64,8 @@ GLRow<DT>::GLRow(GLRow<DT>& anotherOne) {
 
 template <class DT>
 GLRow<DT>& GLRow<DT>::operator= (GLRow<DT>& anotherOne) {
-    _info = new DT;
-    _info = anotherOne._info;
+    *_info = new DT;
+    *_info = *(anotherOne._info);
     _next = new int;
     _next = anotherOne._next;
     _down = new int;
@@ -85,7 +85,7 @@ int GLRow<DT>::getDown() {
 
 template <class DT>
 DT& GLRow<DT>::getInfo() {
-    return _info;
+    return *_info;
 }
 
 template <class DT>
@@ -100,12 +100,12 @@ void GLRow<DT>::setDown(int d) {
 
 template <class DT>
 void GLRow<DT>::setInfo(DT& i) {
-    _info = i;
+    *_info = i;
 }
 
 template <class DT>
 GLRow<DT>::~GLRow() {
-    delete[] _info;
+    delete[] *_info;
 }
 
 template <class DT>
@@ -242,6 +242,13 @@ int ArrayGLL<DT>::find(DT& key) {
     find(key, firstElement); //goes to recursive find algorithm
     
     return -1; //returns -1, in case of error with recursive call (may not be necessary)
+}
+
+template <class DT>
+void ArrayGLL<DT>::findDisplayPath(DT& key) {
+    
+    cout << myGLL[firstElement].getInfo() << endl;
+
 }
 
 template <class DT>
