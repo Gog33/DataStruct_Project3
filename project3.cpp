@@ -144,6 +144,7 @@ public:
     void setFirstElement(int pos); 
     ~ArrayGLL(); //destructor
 private:
+    string parenFormat(int startPos); //recursive call, develops string to print in parenthesis format
     int find(DT& key, int startPos); //part of find recursive algorithm
     int parentPos(DT& key, int startPos, int lastPos); //part of parentPos recursive call
 };
@@ -177,10 +178,31 @@ ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
 }
 
 template <class DT>
-int ArrayGLL<DT>::find(DT& key) {
-    find(key, firstElement); //goes to recursive find algorithm
-    
-    return -1; //returns -1, in case of error with recursive call (may not be necessary)
+string ArrayGLL<DT>::parenFormat(int startPos) {
+    string s = myGLL[startPos].getInfo(); //adds info to string
+    int currPos = myGLL[startPos].getDown();
+    if (currPos != -1) { //if node has a down connection
+        s += "(";
+        s += parenFormat(currPos); //recursive call to add next print string
+        while (myGLL[currPos].getNext() != -1) { //while there is a next node
+            currPos = myGLL[currPos].getNext();
+            s += " ";
+            s += parenFormat(currPos);
+        }
+        s += ")";
+    }
+    return s;
+}
+
+template <class DT>
+ostream& operator<< (ostream& s, ArrayGLL<DT>& oneGLL) {
+    s << parenFormat(oneGLL.firstElement);
+    return s;
+}
+
+template <class DT>
+void ArrayGLL<DT>::display() {
+    cout << parenFormat(firstElement);
 }
 
 template <class DT>
@@ -199,6 +221,13 @@ int ArrayGLL<DT>::find(DT& key, int startPos) {
         return result; //returns result, -1 or otherwise
     }
     return -1; //returns -1 if startPos node lacks key and has no down node
+}
+
+template <class DT>
+int ArrayGLL<DT>::find(DT& key) {
+    find(key, firstElement); //goes to recursive find algorithm
+    
+    return -1; //returns -1, in case of error with recursive call (may not be necessary)
 }
 
 template <class DT>
@@ -225,14 +254,6 @@ int ArrayGLL<DT>::size() {
 }
 
 template <class DT>
-int ArrayGLL<DT>::parentPos(DT& key) {
-    parentPos(key, firstElement, -1); //goes to recursive parentPos algorithm
-                                      //-1 initially, because first Element has no parent position
-    
-    return -1; //returns -1, in case of error with recursive call (may not be necessary)
-}
-
-template <class DT>
 int ArrayGLL<DT>::parentPos(DT& key, int startPos, int lastPos) {
     if (myGLL[startPos].getInfo() == key) {
         return lastPos; //index with the correct key
@@ -249,6 +270,14 @@ int ArrayGLL<DT>::parentPos(DT& key, int startPos, int lastPos) {
         return result; //returns result, -1 or otherwise
     }
     return -1; //returns -1 if startPos node lacks key and has no down node
+}
+
+template <class DT>
+int ArrayGLL<DT>::parentPos(DT& key) {
+    parentPos(key, firstElement, -1); //goes to recursive parentPos algorithm
+                                      //-1 initially, because first Element has no parent position
+    
+    return -1; //returns -1, in case of error with recursive call (may not be necessary)
 }
 
 template <class DT>
