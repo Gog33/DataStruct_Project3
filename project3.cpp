@@ -129,6 +129,7 @@ public:
     void display(); //display in parenthesis format
     int find(DT& key);  //returns index position of the element key
                         //returns -1 if key is not present
+    void printPath(DT* path, int length); //prints out path for findDisplayPath (declared below)
     void findDisplayPath(DT& key); /*prints the values of nodes
                                     *visited along the route to
                                     *the element key
@@ -147,6 +148,7 @@ public:
 private:
     string parenFormat(int startPos); //recursive call, develops string to print in parenthesis format
     int find(DT& key, int startPos); //part of find recursive algorithm
+    bool findPathRecur(DT& key, int startPos, DT* path, int length); //recursive call for print path method
     int parentPos(DT& key, int startPos, int lastPos); //part of parentPos recursive call
 };
 
@@ -245,10 +247,42 @@ int ArrayGLL<DT>::find(DT& key) {
 }
 
 template <class DT>
-void ArrayGLL<DT>::findDisplayPath(DT& key) {
-    
-    cout << myGLL[firstElement].getInfo() << endl;
+void ArrayGLL<DT>::printPath(DT* path, int length) {
+    for (int i = 0; i < length; ++i) {
+        cout << path[i].getInfo();
+        if (i < length - 1) {
+            cout << " ";
+        } else {
+            cout << endl;
+        }
+    }
+}
 
+template <class DT>
+bool ArrayGLL<DT>::findPathRecur(DT& key, int startPos, DT* path, int length) {
+    if (startPos == -1) { //if there is no next location
+        return false; 
+    }
+    else if (myGLL[startPos].getInfo() == key) {
+        path[length] = myGLL[startPos];
+        printPath(path, length + 1);
+        return true;
+    }
+    int currPos = myGLL[startPos].getDown();
+    if (currPos != -1) {
+        path[length] = myGLL[startPos];
+        while (!(pathRecur(key, currPos, path, length + 1)) || (myGLL[currPos].getNext() != -1)) {
+            currPos = myGLL[currPos].getNext();
+        }
+    }
+    return false;
+}
+
+template <class DT>
+void ArrayGLL<DT>::findDisplayPath(DT& key) {
+    DT* path = GLRow<DT>(maxSize); //creates path to store GLRows on the way to key
+
+    pathRecur(key, firstElement, path, 0);
 }
 
 template <class DT>
@@ -266,8 +300,8 @@ template <class DT>
 int ArrayGLL<DT>::size() {
     int size = 0;
     for (int i = 0; i < maxSize; ++i) {
-        if (myGLL[i].getInfo() != NULL && myGLL[i].getInfo() != 999) {  //if a non-free element 
-                                                                        //with info is present
+        if ((myGLL[i].getInfo() != NULL) && (myGLL[i].getInfo() != 999)) { //if a non-free element 
+                                                                           //with info is present
             ++size; //adds to size, the number of elements stored
         }
     }
