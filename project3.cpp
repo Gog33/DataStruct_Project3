@@ -70,6 +70,7 @@ GLRow<DT>& GLRow<DT>::operator= (GLRow<DT>& anotherOne) {
     _next = anotherOne._next;
     _down = new int;
     _down = anotherOne._down; //deep copies all variables from anotherOne
+    return *this;
 }
 
 template <class DT>
@@ -175,6 +176,19 @@ ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
     firstElement = anotherOne.firstElement;
     firstFree = new int;
     firstFree = anotherOne.firstFree; //deep copy
+}
+
+template <class DT>
+ArrayGLL<DT>& ArrayGLL<DT>::operator= (ArrayGLL<DT>& anotherOne) {
+    myGLL = new GLRow<DT>;
+    myGLL = anotherOne.myGLL;
+    maxSize = new int;
+    maxSize = anotherOne.maxSize;
+    firstElement = new int;
+    firstElement = anotherOne.firstElement;
+    firstFree = new int;
+    firstFree = anotherOne.firstFree; //deep copy
+    return *this;
 }
 
 template <class DT>
