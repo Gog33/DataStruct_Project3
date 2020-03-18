@@ -13,7 +13,8 @@ ostream& operator <<(ostream& s, GLRow<DT>& oneGLRow);
 
 template <class DT>
 class GLRow {
-    friend ostream& operator<< <DT>(ostream& s, const GLRow<DT>& oneGLRow);
+    template <class T>
+    friend ostream& operator<< (ostream& s, const GLRow<T>& oneGLRow);
 protected:
     DT* _info;
     int _next;
@@ -40,9 +41,9 @@ ostream& operator<< (ostream& s, const GLRow<DT>& oneGLRow) {
 
 template <class DT>
 GLRow<DT>::GLRow() {
-    _info = NULL;
-    _next = NULL;
-    _down = NULL;
+    *_info = 999;
+    _next = -1;
+    _down = -1;
 }
 
 template <class DT>
@@ -105,7 +106,7 @@ void GLRow<DT>::setInfo(DT& i) {
 
 template <class DT>
 GLRow<DT>::~GLRow() {
-    delete[] *_info;
+    delete[] _info;
 }
 
 template <class DT>
@@ -115,7 +116,8 @@ ostream& operator <<(ostream& s, ArrayGLL<DT>& oneGLL);
 
 template <class DT>
 class ArrayGLL {
-    friend ostream& operator<< <DT>(ostream& s, ArrayGLL<DT>& oneGLL);
+    template <class T>
+    friend ostream& operator<< (ostream& s, ArrayGLL<T>& oneGLL);
 protected:
     GLRow<DT>* myGLL; //array of GLRows
     int maxSize; //maximum size of the array of GLRows
@@ -154,18 +156,18 @@ private:
 
 template <class DT>
 ArrayGLL<DT>::ArrayGLL() {
-    myGLL = NULL;
-    maxSize = NULL;
-    firstElement = NULL;
-    firstFree = NULL;
+    myGLL = new GLRow<DT>[0];
+    maxSize = 0;
+    firstElement = -1;
+    firstFree = -1;
 }
 
 template <class DT>
 ArrayGLL<DT>::ArrayGLL(int size) {
     myGLL = new GLRow<DT>[size];
     maxSize = size;
-    firstElement = NULL;
-    firstFree = NULL;
+    firstElement = -1;
+    firstFree = -1;
 }
 
 template <class DT>
@@ -367,7 +369,12 @@ ArrayGLL<DT>::~ArrayGLL() {
 
 int main() {
     
-    //implemented after full class construction
-
+    ArrayGLL<int> firstGLL(20);
+    int noElements, v, n, d, parentPos;
+    int pos = -1;
+    int keyValue;
+    int tempValue = 0;
+    GLRow<int> oneRow();
+    
     return 0;
 }
