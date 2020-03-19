@@ -147,7 +147,7 @@ public:
     void setFirstElement(int pos); 
     ~ArrayGLL(); //destructor
 private:
-    string parenFormat(int startPos); //recursive call for display (WIP)
+    void recurDisplay(int startPos); //recursive call for display
     int find(DT& key, int startPos); //part of find recursive algorithm
     bool findPathRecur(DT& key, int startPos, DT* path, int length); //recursive call for print path method
     int parentPos(DT& key, int startPos, int lastPos); //part of parentPos recursive call
@@ -200,26 +200,25 @@ ArrayGLL<DT>& ArrayGLL<DT>::operator= (ArrayGLL<DT>& anotherOne) {
 }
 
 template <class DT>
-string ArrayGLL<DT>::parenFormat(int startPos) {
-    string s = "";
-    s += myGLL[startPos].getInfo(); //adds info to string
+void ArrayGLL<DT>::recurDisplay(int startPos) {
+    cout << myGLL[startPos].getInfo(); //prints out current GLRow
     int currPos = myGLL[startPos].getDown();
     if (currPos != -1) { //if node has a down connection
-        s += "(";
-        s += parenFormat(currPos); //recursive call to add next print string
+        cout << " (";
+        recurDisplay(currPos); //recursive call to next GLRow and its children
         while (myGLL[currPos].getNext() != -1) { //while there is a next node
             currPos = myGLL[currPos].getNext();
-            s += " ";
-            s += parenFormat(currPos);
+            cout << " ";
+            recurDisplay(currPos);
         }
-        s += ")";
+        cout << ")";
     }
-    return s;
 }
 
 template <class DT>
 void ArrayGLL<DT>::display() {
-    cout << parenFormat(firstElement);
+    recurDisplay(firstElement);
+    cout << endl;
 }
 
 template <class DT>
@@ -370,18 +369,15 @@ ArrayGLL<DT>::~ArrayGLL() {
 }
 
 int main() {
-    cout << "Program begins:" << endl;
     int noElements, v, n, d;
     
     GLRow<int> oneRow(0); //constructs basic GLRow instance
                           //this will be used to create GLRows for ArrayGLL instance
-    cout << "_info of oneRow: " << oneRow.getInfo() << endl;
     
     //first line of input contains number of sequences
     cin >> noElements;
-    cout << noElements << endl;
     ArrayGLL<int> firstGLL(noElements); //constructs firstGLL with size of noElements
-    cout << "firstGLL initialized..." << endl;
+    //cout << "firstGLL initialized..." << endl;
 
     for (int i = 0; i < noElements; ++i) {
         cin >> v >> n >> d;
@@ -393,6 +389,7 @@ int main() {
     firstGLL.setFirstFree(8);
     firstGLL.setFirstElement(2);
     cout << firstGLL << endl;
-    
+    firstGLL.display();
+
     return 0;
 }
