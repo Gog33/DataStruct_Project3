@@ -21,7 +21,7 @@ protected:
     int _down;
 public:
     GLRow(); //no-args constructor
-    GLRow(const DT& newInfo); //args constructor
+    GLRow(const DT& newInfo); //arg constructor
     GLRow(GLRow<DT>& anotherOne); //copy constructor
     GLRow<DT>& operator= (GLRow<DT>& anotherOne);
     int getNext(); //returns next
@@ -41,13 +41,16 @@ ostream& operator<< (ostream& s, const GLRow<DT>& oneGLRow) {
 
 template <class DT>
 GLRow<DT>::GLRow() {
-    *_info = 999;
+    //cout << "baseline constructor called" << endl;
+    int temp = 999;
+    _info = &temp;
     _next = -1;
     _down = -1;
 }
 
 template <class DT>
 GLRow<DT>::GLRow(const DT& newInfo) {
+    //cout << "arg constructor called" << endl;
     *_info = newInfo;
     _next = -1;
     _down = -1;
@@ -124,7 +127,6 @@ public:
     ArrayGLL(int size); //args (size input) constructor
     ArrayGLL(ArrayGLL<DT>& anotherOne); //copy constructor
     ArrayGLL<DT>& operator= (ArrayGLL<DT>& anotherOne);
-    string parenFormat(int startPos); //recursive call, develops string to print in parenthesis format
     void display(); //display in parenthesis format
     int find(DT& key);  //returns index position of the element key
                         //returns -1 if key is not present
@@ -145,14 +147,26 @@ public:
     void setFirstElement(int pos); 
     ~ArrayGLL(); //destructor
 private:
+    string parenFormat(int startPos); //recursive call for display (WIP)
     int find(DT& key, int startPos); //part of find recursive algorithm
     bool findPathRecur(DT& key, int startPos, DT* path, int length); //recursive call for print path method
     int parentPos(DT& key, int startPos, int lastPos); //part of parentPos recursive call
 };
 
 template <class DT>
+ostream& operator<< (ostream& s, ArrayGLL<DT>& oneGLL) {
+    s << "\t_Info\t_Next\t_Down" << endl;
+    for (int i = 0; i < oneGLL.maxSize; ++i) {
+        s << i << "\t" << oneGLL.myGLL[i].getInfo()
+            << "\t" << oneGLL.myGLL[i].getNext() << "\t"
+            << oneGLL.myGLL[i].getDown() << endl;
+    }
+    return s;
+}
+
+template <class DT>
 ArrayGLL<DT>::ArrayGLL() {
-    myGLL = new GLRow<DT>[0];
+    myGLL = NULL;
     maxSize = 0;
     firstElement = -1;
     firstFree = -1;
@@ -168,7 +182,7 @@ ArrayGLL<DT>::ArrayGLL(int size) {
 
 template <class DT>
 ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
-    myGLL = new GLRow<DT>;
+    myGLL = new GLRow<DT>[anotherOne.maxSize];
     myGLL = anotherOne.myGLL;
     maxSize = anotherOne.maxSize;
     firstElement = anotherOne.firstElement;
@@ -177,7 +191,7 @@ ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
 
 template <class DT>
 ArrayGLL<DT>& ArrayGLL<DT>::operator= (ArrayGLL<DT>& anotherOne) {
-    myGLL = new GLRow<DT>;
+    myGLL = new GLRow<DT>[anotherOne.maxSize];
     myGLL = anotherOne.myGLL;
     maxSize = anotherOne.maxSize;
     firstElement = anotherOne.firstElement;
@@ -200,12 +214,6 @@ string ArrayGLL<DT>::parenFormat(int startPos) {
         }
         s += ")";
     }
-    return s;
-}
-
-template <class DT>
-ostream& operator<< (ostream& s, ArrayGLL<DT>& oneGLL) {
-    s << oneGLL.parenFormat(oneGLL.firstElement);
     return s;
 }
 
@@ -362,16 +370,19 @@ ArrayGLL<DT>::~ArrayGLL() {
 }
 
 int main() {
+    cout << "Program begins:" << endl;
+    int noElements, v, n, d;
     
-    ArrayGLL<int> firstGLL(20);
-    int noElements, v, n, d, parentPos;
-    int pos = -1;
-    int keyValue;
-    int tempValue = 0;
-    GLRow<int> oneRow(0);
-
+    GLRow<int> oneRow(0); //constructs basic GLRow instance
+                          //this will be used to create GLRows for ArrayGLL instance
+    cout << "_info of oneRow: " << oneRow.getInfo() << endl;
+    
     //first line of input contains number of sequences
     cin >> noElements;
+    cout << noElements << endl;
+    ArrayGLL<int> firstGLL(noElements); //constructs firstGLL with size of noElements
+    cout << "firstGLL initialized..." << endl;
+
     for (int i = 0; i < noElements; ++i) {
         cin >> v >> n >> d;
         oneRow.setInfo(v);
@@ -382,30 +393,6 @@ int main() {
     firstGLL.setFirstFree(8);
     firstGLL.setFirstElement(2);
     cout << firstGLL << endl;
-    firstGLL.display();
-
-    ArrayGLL<int>* secondGLL = new ArrayGLL<int>(firstGLL);
-
-    (*secondGLL)[1].setInfo(600);
-    (*secondGLL)[2].setInfo(700);
-
-    cout << *secondGLL << endl;
-    (*secondGLL).display();
-
-    keyValue = 700;
-    pos = (*secondGLL).find(keyValue);
-    if (pos != -1) {
-        cout << (*secondGLL)[pos] << endl;
-        (*secondGLL).findDisplayPath(keyValue);
-    }
-    parentPos = (*secondGLL).parentPos(keyValue);
-    if (parentPos != -1) {
-        cout << (*secondGLL)[parentPos] << endl;
-    }
-    cout << (*secondGLL).size();
-    cout << (*secondGLL).noFree();
-
-    delete secondGLL;
     
     return 0;
 }
