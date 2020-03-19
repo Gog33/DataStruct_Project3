@@ -9,7 +9,7 @@ using namespace std;
 template <class DT>
 class GLRow; //class prototype
 template <class DT>
-ostream& operator <<(ostream& s, GLRow<DT>& oneGLRow);
+ostream& operator <<(ostream& s, const GLRow<DT>& oneGLRow);
 
 template <class DT>
 class GLRow {
@@ -21,7 +21,7 @@ protected:
     int _down;
 public:
     GLRow(); //no-args constructor
-    GLRow(DT& newInfo); //args constructor
+    GLRow(const DT& newInfo); //args constructor
     GLRow(GLRow<DT>& anotherOne); //copy constructor
     GLRow<DT>& operator= (GLRow<DT>& anotherOne);
     int getNext(); //returns next
@@ -29,7 +29,7 @@ public:
     DT& getInfo(); //returns info
     void setNext(int n); //sets next
     void setDown(int d); //sets down
-    void setInfo(DT& i); //sets info
+    void setInfo(const DT& i); //sets info
     ~GLRow(); //destructor
 };
 
@@ -47,7 +47,7 @@ GLRow<DT>::GLRow() {
 }
 
 template <class DT>
-GLRow<DT>::GLRow(DT& newInfo) {
+GLRow<DT>::GLRow(const DT& newInfo) {
     *_info = newInfo;
     _next = -1;
     _down = -1;
@@ -55,21 +55,17 @@ GLRow<DT>::GLRow(DT& newInfo) {
 
 template <class DT>
 GLRow<DT>::GLRow(GLRow<DT>& anotherOne) {
-    *_info = new DT;
+    _info = new DT;
     *_info = *(anotherOne._info);
-    _next = new int;
     _next = anotherOne._next;
-    _down = new int;
     _down = anotherOne._down; //deep copies all variables from anotherOne
 }
 
 template <class DT>
 GLRow<DT>& GLRow<DT>::operator= (GLRow<DT>& anotherOne) {
-    *_info = new DT;
+    _info = new DT;
     *_info = *(anotherOne._info);
-    _next = new int;
     _next = anotherOne._next;
-    _down = new int;
     _down = anotherOne._down; //deep copies all variables from anotherOne
     return *this;
 }
@@ -100,7 +96,7 @@ void GLRow<DT>::setDown(int d) {
 }
 
 template <class DT>
-void GLRow<DT>::setInfo(DT& i) {
+void GLRow<DT>::setInfo(const DT& i) {
     *_info = i;
 }
 
@@ -128,6 +124,7 @@ public:
     ArrayGLL(int size); //args (size input) constructor
     ArrayGLL(ArrayGLL<DT>& anotherOne); //copy constructor
     ArrayGLL<DT>& operator= (ArrayGLL<DT>& anotherOne);
+    string parenFormat(int startPos); //recursive call, develops string to print in parenthesis format
     void display(); //display in parenthesis format
     int find(DT& key);  //returns index position of the element key
                         //returns -1 if key is not present
@@ -148,7 +145,6 @@ public:
     void setFirstElement(int pos); 
     ~ArrayGLL(); //destructor
 private:
-    string parenFormat(int startPos); //recursive call, develops string to print in parenthesis format
     int find(DT& key, int startPos); //part of find recursive algorithm
     bool findPathRecur(DT& key, int startPos, DT* path, int length); //recursive call for print path method
     int parentPos(DT& key, int startPos, int lastPos); //part of parentPos recursive call
@@ -174,11 +170,8 @@ template <class DT>
 ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
     myGLL = new GLRow<DT>;
     myGLL = anotherOne.myGLL;
-    maxSize = new int;
     maxSize = anotherOne.maxSize;
-    firstElement = new int;
     firstElement = anotherOne.firstElement;
-    firstFree = new int;
     firstFree = anotherOne.firstFree; //deep copy
 }
 
@@ -186,18 +179,16 @@ template <class DT>
 ArrayGLL<DT>& ArrayGLL<DT>::operator= (ArrayGLL<DT>& anotherOne) {
     myGLL = new GLRow<DT>;
     myGLL = anotherOne.myGLL;
-    maxSize = new int;
     maxSize = anotherOne.maxSize;
-    firstElement = new int;
     firstElement = anotherOne.firstElement;
-    firstFree = new int;
     firstFree = anotherOne.firstFree; //deep copy
     return *this;
 }
 
 template <class DT>
 string ArrayGLL<DT>::parenFormat(int startPos) {
-    string s = myGLL[startPos].getInfo(); //adds info to string
+    string s = "";
+    s += myGLL[startPos].getInfo(); //adds info to string
     int currPos = myGLL[startPos].getDown();
     if (currPos != -1) { //if node has a down connection
         s += "(";
@@ -214,7 +205,7 @@ string ArrayGLL<DT>::parenFormat(int startPos) {
 
 template <class DT>
 ostream& operator<< (ostream& s, ArrayGLL<DT>& oneGLL) {
-    s << parenFormat(oneGLL.firstElement);
+    s << oneGLL.parenFormat(oneGLL.firstElement);
     return s;
 }
 
@@ -251,7 +242,7 @@ int ArrayGLL<DT>::find(DT& key) {
 template <class DT>
 void ArrayGLL<DT>::printPath(DT* path, int length) {
     for (int i = 0; i < length; ++i) {
-        cout << path[i].getInfo();
+        cout << path[i];
         if (i < length - 1) {
             cout << " ";
         } else {
@@ -266,15 +257,18 @@ bool ArrayGLL<DT>::findPathRecur(DT& key, int startPos, DT* path, int length) {
         return false; 
     }
     else if (myGLL[startPos].getInfo() == key) {
-        path[length] = myGLL[startPos];
+        path[length] = myGLL[startPos].getInfo();
         printPath(path, length + 1);
         return true;
     }
     int currPos = myGLL[startPos].getDown();
     if (currPos != -1) {
-        path[length] = myGLL[startPos];
-        while (!(pathRecur(key, currPos, path, length + 1)) || (myGLL[currPos].getNext() != -1)) {
+        path[length] = myGLL[startPos].getInfo();
+        while ((myGLL[currPos].getNext() != -1)) {
             currPos = myGLL[currPos].getNext();
+            if (findPathRecur(key, currPos, path, length + 1)) {
+                return true; //if the forward path contains the printed statement
+            }
         }
     }
     return false;
@@ -282,9 +276,9 @@ bool ArrayGLL<DT>::findPathRecur(DT& key, int startPos, DT* path, int length) {
 
 template <class DT>
 void ArrayGLL<DT>::findDisplayPath(DT& key) {
-    DT* path = GLRow<DT>(maxSize); //creates path to store GLRows on the way to key
+    DT* path = new DT[maxSize]; //creates path to store GLRows on the way to key
 
-    pathRecur(key, firstElement, path, 0);
+    findPathRecur(key, firstElement, path, 0);
 }
 
 template <class DT>
@@ -302,7 +296,7 @@ template <class DT>
 int ArrayGLL<DT>::size() {
     int size = 0;
     for (int i = 0; i < maxSize; ++i) {
-        if ((myGLL[i].getInfo() != NULL) && (myGLL[i].getInfo() != 999)) { //if a non-free element 
+        if (myGLL[i].getInfo() != 999) { //if a non-free element 
                                                                            //with info is present
             ++size; //adds to size, the number of elements stored
         }
@@ -318,11 +312,11 @@ int ArrayGLL<DT>::parentPos(DT& key, int startPos, int lastPos) {
     int pastPos = startPos;
     int currPos = myGLL[startPos].getDown();
     if (currPos != -1) { //if node has a down connection 
-        int result = parentPos(key, currPos, pastPos); //first recursive call *THIS IS WHERE I LEFT OFF
+        int result = parentPos(key, currPos, pastPos);
         while (myGLL[currPos].getNext() != -1 && result == -1) { //while there is a next node
-            pastPos = currPos; //set pastPos to currPos          //and result is still -1 (key not found)
+            pastPos = currPos; //set pastPos to currPos
             currPos = myGLL[currPos].getNext(); //sends currPos to next node
-            result = find(key, currPos, pastPos); //recursive call
+            result = parentPos(key, currPos, pastPos); //recursive call
         }
         return result; //returns result, -1 or otherwise
     }
@@ -374,7 +368,44 @@ int main() {
     int pos = -1;
     int keyValue;
     int tempValue = 0;
-    GLRow<int> oneRow();
+    GLRow<int> oneRow(0);
+
+    //first line of input contains number of sequences
+    cin >> noElements;
+    for (int i = 0; i < noElements; ++i) {
+        cin >> v >> n >> d;
+        oneRow.setInfo(v);
+        oneRow.setNext(n);
+        oneRow.setDown(d);
+        firstGLL[i] = oneRow;
+    }
+    firstGLL.setFirstFree(8);
+    firstGLL.setFirstElement(2);
+    cout << firstGLL << endl;
+    firstGLL.display();
+
+    ArrayGLL<int>* secondGLL = new ArrayGLL<int>(firstGLL);
+
+    (*secondGLL)[1].setInfo(600);
+    (*secondGLL)[2].setInfo(700);
+
+    cout << *secondGLL << endl;
+    (*secondGLL).display();
+
+    keyValue = 700;
+    pos = (*secondGLL).find(keyValue);
+    if (pos != -1) {
+        cout << (*secondGLL)[pos] << endl;
+        (*secondGLL).findDisplayPath(keyValue);
+    }
+    parentPos = (*secondGLL).parentPos(keyValue);
+    if (parentPos != -1) {
+        cout << (*secondGLL)[parentPos] << endl;
+    }
+    cout << (*secondGLL).size();
+    cout << (*secondGLL).noFree();
+
+    delete secondGLL;
     
     return 0;
 }
