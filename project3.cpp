@@ -379,6 +379,7 @@ int main() {
 
     //first line of input contains number of sequences
     cin >> noElements;
+    cout << "firstGLL:" << endl;
     ArrayGLL<int> firstGLL(noElements); //constructs firstGLL with size of noElements
 
     for (int i = 0; i < noElements; ++i) {
@@ -407,7 +408,8 @@ int main() {
 
     cout << "no. free locations: " << firstGLL.noFree() << endl;
     cout << "no. elements: " << firstGLL.size() << endl;
-    /*
+    
+    cout << "secondGLL:" << endl;
     ArrayGLL<int>* secondGLL = new ArrayGLL<int>(firstGLL);
     
     keyValue = 456;
@@ -418,7 +420,7 @@ int main() {
         << ", parent pos: " << (*secondGLL).parentPos(keyValue) << endl;
     (*secondGLL).findDisplayPath(keyValue);
     
-    delete[] secondGLL;
-    */
+    delete secondGLL;
+    
     return 0;
 }
