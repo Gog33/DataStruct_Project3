@@ -151,7 +151,7 @@ private:
     void printPath(DT* path, int length); //prints out path for findDisplayPath
     bool findPathRecur(const DT& key, int startPos, DT* path, int length); //recursive call for print path method
     int recurSize(int startPos); //recursive call for size
-    int parentPos(const DT& key, int startPos, int lastPos); //part of parentPos recursive call
+    int recurParentPos(const DT& key, int startPos, int lastPos); //part of parentPos recursive call
 };
 
 template <class DT>
@@ -318,18 +318,17 @@ int ArrayGLL<DT>::size() {
 }
 
 template <class DT>
-int ArrayGLL<DT>::parentPos(const DT& key, int startPos, int lastPos) {
+int ArrayGLL<DT>::recurParentPos(const DT& key, int startPos, int lastPos) {
     if (myGLL[startPos].getInfo() == key) {
         return lastPos; //index with the correct key
     }
-    int pastPos = startPos;
-    int currPos = myGLL[startPos].getDown();
+    int pastPos = startPos; //set to parent GLRow
+    int currPos = myGLL[startPos].getDown(); //start of the children of startPos/pastPos
     if (currPos != -1) { //if node has a down connection 
-        int result = parentPos(key, currPos, pastPos);
+        int result = recurParentPos(key, currPos, pastPos);
         while (myGLL[currPos].getNext() != -1 && result == -1) { //while there is a next node
-            pastPos = currPos; //set pastPos to currPos
             currPos = myGLL[currPos].getNext(); //sends currPos to next node
-            result = parentPos(key, currPos, pastPos); //recursive call
+            result = recurParentPos(key, currPos, pastPos); //recursive call
         }
         return result; //returns result, -1 or otherwise
     }
@@ -338,10 +337,8 @@ int ArrayGLL<DT>::parentPos(const DT& key, int startPos, int lastPos) {
 
 template <class DT>
 int ArrayGLL<DT>::parentPos(const DT& key) {
-    parentPos(key, firstElement, -1); //goes to recursive parentPos algorithm
-                                      //-1 initially, because first Element has no parent position
-    
-    return -1; //returns -1, in case of error with recursive call (may not be necessary)
+    return recurParentPos(key, firstElement, -1); //goes to recursive parentPos algorithm
+    //lastPos initially set to -1, as the first element has no parent position
 }
 
 template <class DT>
@@ -408,6 +405,9 @@ int main() {
     
     cout << firstGLL.noFree() << endl;
     cout << firstGLL.size() << endl;
+
+    cout << firstGLL.parentPos(35) << endl;
+    cout << firstGLL.parentPos(10) << endl;
 
     return 0;
 }
