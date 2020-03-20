@@ -22,8 +22,8 @@ protected:
 public:
     GLRow(); //no-args constructor
     GLRow(const DT& newInfo); //arg constructor
-    GLRow(GLRow<DT>& anotherOne); //copy constructor
-    GLRow<DT>& operator= (GLRow<DT>& anotherOne);
+    GLRow(const GLRow<DT>& anotherOne); //copy constructor
+    GLRow<DT>& operator= (const GLRow<DT>& anotherOne);
     int getNext(); //returns next
     int getDown(); //returns down
     DT& getInfo(); //returns info
@@ -57,7 +57,7 @@ GLRow<DT>::GLRow(const DT& newInfo) {
 }
 
 template <class DT>
-GLRow<DT>::GLRow(GLRow<DT>& anotherOne) {
+GLRow<DT>::GLRow(const GLRow<DT>& anotherOne) {
     _info = new DT;
     *_info = *(anotherOne._info);
     _next = anotherOne._next;
@@ -65,7 +65,7 @@ GLRow<DT>::GLRow(GLRow<DT>& anotherOne) {
 }
 
 template <class DT>
-GLRow<DT>& GLRow<DT>::operator= (GLRow<DT>& anotherOne) {
+GLRow<DT>& GLRow<DT>::operator= (const GLRow<DT>& anotherOne) {
     _info = new DT;
     *_info = *(anotherOne._info);
     _next = anotherOne._next;
@@ -128,7 +128,7 @@ public:
     ArrayGLL(ArrayGLL<DT>& anotherOne); //copy constructor
     ArrayGLL<DT>& operator= (ArrayGLL<DT>& anotherOne);
     void display(); //display in parenthesis format
-    int find(DT& key);  //returns index position of the element key
+    int find(const DT& key);  //returns index position of the element key
                         //returns -1 if key is not present
     void printPath(DT* path, int length); //prints out path for findDisplayPath (declared below)
     void findDisplayPath(DT& key); /*prints the values of nodes
@@ -148,7 +148,7 @@ public:
     ~ArrayGLL(); //destructor
 private:
     void recurDisplay(int startPos); //recursive call for display
-    int find(DT& key, int startPos); //part of find recursive algorithm
+    int find(const DT& key, int startPos); //part of find recursive algorithm
     bool findPathRecur(DT& key, int startPos, DT* path, int length); //recursive call for print path method
     int parentPos(DT& key, int startPos, int lastPos); //part of parentPos recursive call
 };
@@ -222,7 +222,7 @@ void ArrayGLL<DT>::display() {
 }
 
 template <class DT>
-int ArrayGLL<DT>::find(DT& key, int startPos) {
+int ArrayGLL<DT>::find(const DT& key, int startPos) {
     if (myGLL[startPos].getInfo() == key) {
         return startPos; //index with the correct key
     }
@@ -240,10 +240,8 @@ int ArrayGLL<DT>::find(DT& key, int startPos) {
 }
 
 template <class DT>
-int ArrayGLL<DT>::find(DT& key) {
-    find(key, firstElement); //goes to recursive find algorithm
-    
-    return -1; //returns -1, in case of error with recursive call (may not be necessary)
+int ArrayGLL<DT>::find(const DT& key) {
+    return find(key, firstElement);
 }
 
 template <class DT>
@@ -390,6 +388,8 @@ int main() {
     firstGLL.setFirstElement(2);
     cout << firstGLL << endl;
     firstGLL.display();
+
+    cout << firstGLL.find(35);
 
     return 0;
 }
