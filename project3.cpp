@@ -21,7 +21,7 @@ protected:
     int _down;
 public:
     GLRow(); //no-args constructor
-    GLRow(const DT& newInfo); //arg constructor
+    GLRow(DT& newInfo); //arg constructor
     GLRow(GLRow<DT>& anotherOne); //copy constructor
     GLRow<DT>& operator= (GLRow<DT>& anotherOne);
     int getNext(); //returns next
@@ -49,8 +49,8 @@ GLRow<DT>::GLRow() {
 }
 
 template <class DT>
-GLRow<DT>::GLRow(const DT& newInfo) {
-    //cout << "arg constructor called" << endl;
+GLRow<DT>::GLRow(DT& newInfo) {
+    _info = &newInfo;
     *_info = newInfo;
     _next = -1;
     _down = -1;
@@ -184,7 +184,9 @@ ArrayGLL<DT>::ArrayGLL(int size) {
 template <class DT>
 ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
     myGLL = new GLRow<DT>[anotherOne.maxSize];
-    myGLL = anotherOne.myGLL;
+    for (int i = 0; i < anotherOne.maxSize; ++i) {
+        myGLL[i] = anotherOne.myGLL[i];
+    }
     maxSize = anotherOne.maxSize;
     firstElement = anotherOne.firstElement;
     firstFree = anotherOne.firstFree; //deep copy
@@ -193,7 +195,9 @@ ArrayGLL<DT>::ArrayGLL(ArrayGLL<DT>& anotherOne) {
 template <class DT>
 ArrayGLL<DT>& ArrayGLL<DT>::operator= (ArrayGLL<DT>& anotherOne) {
     myGLL = new GLRow<DT>[anotherOne.maxSize];
-    myGLL = anotherOne.myGLL;
+    for (int i = 0; i < anotherOne.maxSize; ++i) {
+        myGLL[i] = anotherOne.myGLL[i];
+    }
     maxSize = anotherOne.maxSize;
     firstElement = anotherOne.firstElement;
     firstFree = anotherOne.firstFree; //deep copy
@@ -275,8 +279,9 @@ void ArrayGLL<DT>::findPathRecur(DT& key, int startPos, DT path[], int length) {
 }
 template <class DT>
 void ArrayGLL<DT>::findDisplayPath(DT& key) {
-    DT path[maxSize]; //creates path to store GLRows on the way to key
+    DT* path = new DT[maxSize]; //creates path to store GLRows on the way to key
     findPathRecur(key, firstElement, path, 0);
+    delete[] path;
 }
 
 template <class DT>
@@ -367,8 +372,9 @@ int main() {
     //NOTE: this main method is designed for reading the input.txt file provided to students
     int noElements, v, n, d;
     int keyValue;
+    int tempValue = 0;
 
-    GLRow<int> oneRow(0); //constructs basic GLRow instance
+    GLRow<int> oneRow(tempValue); //constructs basic GLRow instance
                           //this will be used to create GLRows for ArrayGLL instance
 
     //first line of input contains number of sequences
@@ -401,6 +407,18 @@ int main() {
 
     cout << "no. free locations: " << firstGLL.noFree() << endl;
     cout << "no. elements: " << firstGLL.size() << endl;
+    /*
+    ArrayGLL<int>* secondGLL = new ArrayGLL<int>(firstGLL);
+    
+    keyValue = 456;
+    (*secondGLL)[11].setInfo(keyValue);
 
+    (*secondGLL).display();
+    cout << keyValue << ", position: " << (*secondGLL).find(keyValue)
+        << ", parent pos: " << (*secondGLL).parentPos(keyValue) << endl;
+    (*secondGLL).findDisplayPath(keyValue);
+    
+    delete[] secondGLL;
+    */
     return 0;
 }
