@@ -22,14 +22,14 @@ protected:
 public:
     GLRow(); //no-args constructor
     GLRow(const DT& newInfo); //arg constructor
-    GLRow(const GLRow<DT>& anotherOne); //copy constructor
-    GLRow<DT>& operator= (const GLRow<DT>& anotherOne);
+    GLRow(GLRow<DT>& anotherOne); //copy constructor
+    GLRow<DT>& operator= (GLRow<DT>& anotherOne);
     int getNext(); //returns next
     int getDown(); //returns down
     DT& getInfo(); //returns info
     void setNext(int n); //sets next
     void setDown(int d); //sets down
-    void setInfo(const DT& i); //sets info
+    void setInfo(DT& i); //sets info
     ~GLRow(); //destructor
 };
 
@@ -57,7 +57,7 @@ GLRow<DT>::GLRow(const DT& newInfo) {
 }
 
 template <class DT>
-GLRow<DT>::GLRow(const GLRow<DT>& anotherOne) {
+GLRow<DT>::GLRow(GLRow<DT>& anotherOne) {
     _info = new DT;
     *_info = *(anotherOne._info);
     _next = anotherOne._next;
@@ -65,7 +65,7 @@ GLRow<DT>::GLRow(const GLRow<DT>& anotherOne) {
 }
 
 template <class DT>
-GLRow<DT>& GLRow<DT>::operator= (const GLRow<DT>& anotherOne) {
+GLRow<DT>& GLRow<DT>::operator= (GLRow<DT>& anotherOne) {
     _info = new DT;
     *_info = *(anotherOne._info);
     _next = anotherOne._next;
@@ -99,7 +99,7 @@ void GLRow<DT>::setDown(int d) {
 }
 
 template <class DT>
-void GLRow<DT>::setInfo(const DT& i) {
+void GLRow<DT>::setInfo(DT& i) {
     *_info = i;
 }
 
@@ -120,7 +120,7 @@ class ArrayGLL {
 protected:
     GLRow<DT>* myGLL; //array of GLRows
     int maxSize; //maximum size of the array of GLRows
-    int firstElement; 
+    int firstElement;
     int firstFree;
 public:
     ArrayGLL(); //no-args constructor
@@ -128,30 +128,30 @@ public:
     ArrayGLL(ArrayGLL<DT>& anotherOne); //copy constructor
     ArrayGLL<DT>& operator= (ArrayGLL<DT>& anotherOne);
     void display(); //display in parenthesis format
-    int find(const DT& key);  //returns index position of the element key
+    int find(DT& key);  //returns index position of the element key
                         //returns -1 if key is not present
-    void findDisplayPath(const DT& key); /*prints the values of nodes
+    void findDisplayPath(DT& key); /*prints the values of nodes
                                           *visited along the route to
                                           *the element key
                                           */
     int noFree(); //returns the number of free locations
     int size(); //return number of elements stored
-    int parentPos(const DT& key); //provides the location of the parent
+    int parentPos(DT& key); //provides the location of the parent
                             //of the element key in the array
     GLRow<DT>& operator [] (int pos); //returns the GLRow that is in
                                       //the position pos in the array
-    int getFirstFree(); 
-    int getFirstElement(); 
-    void setFirstFree(int pos); 
-    void setFirstElement(int pos); 
+    int getFirstFree();
+    int getFirstElement();
+    void setFirstFree(int pos);
+    void setFirstElement(int pos);
     ~ArrayGLL(); //destructor
 private:
     void recurDisplay(int startPos); //recursive call for display
-    int find(const DT& key, int startPos); //part of find recursive algorithm
+    int find(DT& key, int startPos); //part of find recursive algorithm
     void printPath(DT* path, int length); //prints out path for findDisplayPath
-    bool findPathRecur(const DT& key, int startPos, DT* path, int length); //recursive call for print path method
+    bool findPathRecur(DT& key, int startPos, DT* path, int length); //recursive call for print path method
     int recurSize(int startPos); //recursive call for size
-    int recurParentPos(const DT& key, int startPos, int lastPos); //part of parentPos recursive call
+    int recurParentPos(DT& key, int startPos, int lastPos); //part of parentPos recursive call
 };
 
 template <class DT>
@@ -223,7 +223,7 @@ void ArrayGLL<DT>::display() {
 }
 
 template <class DT>
-int ArrayGLL<DT>::find(const DT& key, int startPos) {
+int ArrayGLL<DT>::find(DT& key, int startPos) {
     if (myGLL[startPos].getInfo() == key) {
         return startPos; //index with the correct key
     }
@@ -241,7 +241,7 @@ int ArrayGLL<DT>::find(const DT& key, int startPos) {
 }
 
 template <class DT>
-int ArrayGLL<DT>::find(const DT& key) {
+int ArrayGLL<DT>::find(DT& key) {
     return find(key, firstElement);
 }
 /*
@@ -256,11 +256,10 @@ void ArrayGLL<DT>::printPath(DT* path, int length) {
         }
     }
 }
-
 template <class DT>
-bool ArrayGLL<DT>::findPathRecur(const DT& key, int startPos, DT* path, int length) {
+bool ArrayGLL<DT>::findPathRecur(DT& key, int startPos, DT* path, int length) {
     if (startPos == -1) { //if there is no next location
-        return false; 
+        return false;
     }
     else if (myGLL[startPos].getInfo() == key) {
         path[length] = myGLL[startPos].getInfo();
@@ -279,11 +278,9 @@ bool ArrayGLL<DT>::findPathRecur(const DT& key, int startPos, DT* path, int leng
     }
     return false;
 }
-
 template <class DT>
-void ArrayGLL<DT>::findDisplayPath(const DT& key) {
+void ArrayGLL<DT>::findDisplayPath(DT& key) {
     DT path[maxSize]; //creates path to store GLRows on the way to key
-
     findPathRecur(key, firstElement, path, 0);
 }
 */
@@ -318,7 +315,7 @@ int ArrayGLL<DT>::size() {
 }
 
 template <class DT>
-int ArrayGLL<DT>::recurParentPos(const DT& key, int startPos, int lastPos) {
+int ArrayGLL<DT>::recurParentPos(DT& key, int startPos, int lastPos) {
     if (myGLL[startPos].getInfo() == key) {
         return lastPos; //index with the correct key
     }
@@ -336,7 +333,7 @@ int ArrayGLL<DT>::recurParentPos(const DT& key, int startPos, int lastPos) {
 }
 
 template <class DT>
-int ArrayGLL<DT>::parentPos(const DT& key) {
+int ArrayGLL<DT>::parentPos(DT& key) {
     return recurParentPos(key, firstElement, -1); //goes to recursive parentPos algorithm
     //lastPos initially set to -1, as the first element has no parent position
 }
@@ -374,10 +371,11 @@ ArrayGLL<DT>::~ArrayGLL() {
 int main() {
     //NOTE: this main method is designed for reading the input.txt file provided to students
     int noElements, v, n, d;
-    
+    int keyValue;
+
     GLRow<int> oneRow(0); //constructs basic GLRow instance
                           //this will be used to create GLRows for ArrayGLL instance
-    
+
     //first line of input contains number of sequences
     cin >> noElements;
     ArrayGLL<int> firstGLL(noElements); //constructs firstGLL with size of noElements
@@ -397,17 +395,18 @@ int main() {
 
     firstGLL.display();
 
-    cout << firstGLL.find(35) << endl;
-    cout << firstGLL.find(10) << endl;
-    
+    keyValue = 35;
+    cout << keyValue << ", position: " << firstGLL.find(keyValue)
+        << ", parent pos: " << firstGLL.parentPos(keyValue) << endl;
+    keyValue = 10;
+    cout << keyValue << ", position: " << firstGLL.find(keyValue)
+        << ", parent pos: " << firstGLL.parentPos(keyValue) << endl;
+
     //firstGLL.findDisplayPath(35);
     //firstGLL.findDisplayPath(10);
-    
-    cout << firstGLL.noFree() << endl;
-    cout << firstGLL.size() << endl;
 
-    cout << firstGLL.parentPos(35) << endl;
-    cout << firstGLL.parentPos(10) << endl;
+    cout << "no. free locations: " << firstGLL.noFree() << endl;
+    cout << "no. elements: " << firstGLL.size() << endl;
 
     return 0;
 }
